@@ -7,7 +7,7 @@ public abstract class AbstractNumberConverter {
     protected abstract String getSecondDecadeStringForm(int index);
     protected abstract String getDecadesStringForm(int index);
     protected abstract String getHundredsStringForm(int index);
-    protected abstract String getTriadName(int triadIndex, int count);
+    protected abstract String getTriadName(int triadIndex, int triadValue);
     protected abstract int getTriadGender(int triadIndex);
 
     private StringBuilder mStringBuilder;
