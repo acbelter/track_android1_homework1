@@ -1,7 +1,6 @@
 package com.acbelter.android1.homework1.converter;
 
 import android.content.res.Resources;
-import android.util.SparseIntArray;
 
 import com.acbelter.android1.homework1.R;
 
@@ -20,7 +19,7 @@ public class RuNumberConverter extends AbstractNumberConverter {
     private List<String> mHundreds;
     private List<List<String>> mForms;
     // triadIndex -> gender (0 or 1)
-    private SparseIntArray mFormsGenders;
+    private int[] mFormsGenders;
 
     public RuNumberConverter(Resources res) {
         mMinus = res.getString(R.string.minus);
@@ -40,11 +39,7 @@ public class RuNumberConverter extends AbstractNumberConverter {
         mForms.add(Arrays.asList(res.getStringArray(R.array.millions_forms)));
         mForms.add(Arrays.asList(res.getStringArray(R.array.billions_forms)));
 
-        mFormsGenders = new SparseIntArray(4);
-        mFormsGenders.append(0, 1);
-        mFormsGenders.append(1, 0);
-        mFormsGenders.append(2, 1);
-        mFormsGenders.append(3, 1);
+        mFormsGenders = new int[] {1, 0, 1, 1};
     }
 
     private List<String> prepareNumberFormsArray(Resources res, int arrayResId) {
@@ -87,7 +82,7 @@ public class RuNumberConverter extends AbstractNumberConverter {
 
     @Override
     protected int getTriadGender(int triadIndex) {
-        return mFormsGenders.get(triadIndex);
+        return mFormsGenders[triadIndex];
     }
 
     @Override
