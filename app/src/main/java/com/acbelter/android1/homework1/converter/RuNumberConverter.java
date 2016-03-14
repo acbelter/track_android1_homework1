@@ -1,80 +1,110 @@
 package com.acbelter.android1.homework1.converter;
 
+import android.content.res.Resources;
+import android.util.SparseIntArray;
+
+import com.acbelter.android1.homework1.R;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 public class RuNumberConverter extends AbstractNumberConverter {
-    private static final String ZERO = "ноль";
-    private static final String MINUS = "минус";
+    private String mMinus;
+    private String mZero;
 
-    private static final String[][] FIRST_DECADE = {
-            {"", "одна", "две", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять"},
-            {"", "один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять"},
-    };
+    private List<List<String>> mFirstDecade;
+    private List<String> mSecondDecade;
+    private List<String> mDecades;
+    private List<String> mHundreds;
+    private List<List<String>> mForms;
+    // triadIndex -> gender (0 or 1)
+    private SparseIntArray mFormsGenders;
 
-    private static final String[] SECOND_DECADE = {"", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать",
-            "пятнадцать", "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать", "двадцать"};
+    public RuNumberConverter(Resources res) {
+        mMinus = res.getString(R.string.minus);
+        mZero = res.getString(R.string.zero);
 
-    private static final String[] DECADES = {"", "десять", "двадцать", "тридцать", "сорок", "пятьдесят",
-            "шестьдесят", "семьдесят", "восемьдесят", "девяносто"};
+        mFirstDecade = new ArrayList<>(2);
+        mFirstDecade.add(prepareNumberFormsArray(res, R.array.first_decade_female));
+        mFirstDecade.add(prepareNumberFormsArray(res, R.array.first_decade_male));
 
-    private static final String[] HUNDREDS = {"", "сто", "двести", "триста", "четыреста", "пятьсот",
-            "шестьсот", "семьсот", "восемьсот", "девятьсот"};
+        mSecondDecade = prepareNumberFormsArray(res, R.array.second_decade);
+        mDecades = prepareNumberFormsArray(res, R.array.decades);
+        mHundreds = prepareNumberFormsArray(res, R.array.hundreds);
 
-    private static final String[][] FORMS = {
-            {"", "", "", "1"},
-            {"тысяча", "тысячи", "тысяч", "0"},
-            {"миллион", "миллиона", "миллионов", "1"},
-            {"миллиард", "миллиарда", "миллиардов", "1"},
-    };
+        mForms = new ArrayList<>(4);
+        mForms.add(Arrays.asList("", "", ""));
+        mForms.add(Arrays.asList(res.getStringArray(R.array.thousands_forms)));
+        mForms.add(Arrays.asList(res.getStringArray(R.array.millions_forms)));
+        mForms.add(Arrays.asList(res.getStringArray(R.array.billions_forms)));
+
+        mFormsGenders = new SparseIntArray(4);
+        mFormsGenders.append(0, 1);
+        mFormsGenders.append(1, 0);
+        mFormsGenders.append(2, 1);
+        mFormsGenders.append(3, 1);
+    }
+
+    private List<String> prepareNumberFormsArray(Resources res, int arrayResId) {
+        String[] items = res.getStringArray(arrayResId);
+        List<String> result = new ArrayList<>(items.length + 1);
+        result.add("");
+        Collections.addAll(result, items);
+        return result;
+    }
 
     @Override
     protected String getMinusStringForm() {
-        return MINUS;
+        return mMinus;
     }
 
     @Override
     protected String getZeroStringForm() {
-        return ZERO;
+        return mZero;
     }
 
     @Override
     protected String getFirstDecadeStringForm(int index, int gender) {
-        return FIRST_DECADE[gender][index];
+        return mFirstDecade.get(gender).get(index);
     }
 
     @Override
     protected String getSecondDecadeStringForm(int index) {
-        return SECOND_DECADE[index];
+        return mSecondDecade.get(index);
     }
 
     @Override
     protected String getDecadesStringForm(int index) {
-        return DECADES[index];
+        return mDecades.get(index);
     }
 
     @Override
     protected String getHundredsStringForm(int index) {
-        return HUNDREDS[index];
+        return mHundreds.get(index);
     }
 
     @Override
     protected int getTriadGender(int triadIndex) {
-        return Integer.valueOf(FORMS[triadIndex][3]);
+        return mFormsGenders.get(triadIndex);
     }
 
     @Override
     protected String getTriadName(int triadIndex, int triadValue) {
         if (triadValue % 100 > 4 && triadValue % 100 < 21) {
-            return FORMS[triadIndex][2];
+            return mForms.get(triadIndex).get(2);
         }
 
         switch (triadValue % 10) {
             case 1:
-                return FORMS[triadIndex][0];
+                return mForms.get(triadIndex).get(0);
             case 2:
             case 3:
             case 4:
-                return FORMS[triadIndex][1];
+                return mForms.get(triadIndex).get(1);
             default:
-                return FORMS[triadIndex][2];
+                return mForms.get(triadIndex).get(2);
         }
     }
 }

@@ -14,7 +14,7 @@ public class ItemsRecyclerAdapter extends RecyclerView.Adapter<ItemViewHolder> {
     private int mCount;
 
     public ItemsRecyclerAdapter(Context context, int count) {
-        mConverter = new RuNumberConverter();
+        mConverter = new RuNumberConverter(context.getResources());
         mInflater = LayoutInflater.from(context);
         mCount = count;
     }
