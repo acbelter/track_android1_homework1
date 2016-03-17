@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 public class FirstActivity extends AppCompatActivity {
     private static final long SLEEP_DELAY = 2000L;
     private boolean mResumed;
+    private volatile boolean mOnBackPressed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,9 +25,11 @@ public class FirstActivity extends AppCompatActivity {
                     try {
                         Thread.sleep(SLEEP_DELAY);
 
-                        Intent intent = new Intent(FirstActivity.this, SecondActivity.class);
-                        startActivity(intent);
-                        finish();
+                        if (!mOnBackPressed) {
+                            Intent intent = new Intent(FirstActivity.this, SecondActivity.class);
+                            startActivity(intent);
+                            finish();
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -35,5 +38,11 @@ public class FirstActivity extends AppCompatActivity {
             thread.start();
             mResumed = true;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        mOnBackPressed = true;
     }
 }
